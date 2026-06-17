@@ -1,54 +1,79 @@
 import 'package:flutter/material.dart';
-import '../data.dart';
-import '../student.dart';
 
-class AddStudent extends StatelessWidget {
-  AddStudent({super.key});
+import '../database/database_helper.dart';
 
-  final nameController = TextEditingController();
-  final emailController = TextEditingController();
-  final courseController = TextEditingController();
+class AddStudent extends StatefulWidget {
+  const AddStudent({super.key});
+
+  @override
+  State<AddStudent> createState() => _AddStudentState();
+}
+
+class _AddStudentState extends State<AddStudent> {
+  final db = DatabaseHelper();
+
+  final name = TextEditingController();
+
+  final email = TextEditingController();
+
+  final course = TextEditingController();
+
+  final year = TextEditingController();
+
+  final phone = TextEditingController();
+
+  save() async {
+    await db.addStudent({
+      "name": name.text,
+
+      "email": email.text,
+
+      "course": course.text,
+
+      "year": year.text,
+
+      "phone": phone.text,
+    });
+
+    Navigator.pop(context);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Add Student")),
+      appBar: AppBar(title: Text("Add Student")),
 
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16),
+
         child: Column(
           children: [
             TextField(
-              controller: nameController,
-              decoration: const InputDecoration(labelText: "Name"),
+              controller: name,
+              decoration: InputDecoration(labelText: "Name"),
             ),
 
             TextField(
-              controller: emailController,
-              decoration: const InputDecoration(labelText: "Email"),
+              controller: email,
+              decoration: InputDecoration(labelText: "Email"),
             ),
 
             TextField(
-              controller: courseController,
-              decoration: const InputDecoration(labelText: "Course"),
+              controller: course,
+              decoration: InputDecoration(labelText: "Course"),
             ),
 
-            const SizedBox(height: 20),
-
-            ElevatedButton(
-              onPressed: () {
-                students.add(
-                  Student(
-                    name: nameController.text,
-                    email: emailController.text,
-                    course: courseController.text,
-                  ),
-                );
-
-                Navigator.pop(context);
-              },
-              child: const Text("Save Student"),
+            TextField(
+              controller: year,
+              decoration: InputDecoration(labelText: "Year"),
             ),
+
+            TextField(
+              controller: phone,
+              decoration: InputDecoration(labelText: "Phone"),
+            ),
+
+            ElevatedButton(onPressed: save, child: Text("Save")),
           ],
         ),
       ),

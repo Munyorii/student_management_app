@@ -1,10 +1,33 @@
 import 'package:flutter/material.dart';
+import '../database/database_helper.dart';
 
-class LoginScreen extends StatelessWidget {
-  LoginScreen({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final db = DatabaseHelper();
+
+  final email = TextEditingController();
+
+  final password = TextEditingController();
+
+  login() async {
+    var user = await db.loginUser(email.text, password.text);
+
+    if (user != null) {
+      Navigator.pushReplacementNamed(context, "/dashboard");
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Invalid email or password. Register first."),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -13,32 +36,32 @@ class LoginScreen extends StatelessWidget {
 
       body: Padding(
         padding: const EdgeInsets.all(16),
+
         child: Column(
           children: [
             TextField(
-              controller: emailController,
+              controller: email,
+
               decoration: const InputDecoration(labelText: "Email"),
             ),
 
             TextField(
-              controller: passwordController,
-              decoration: const InputDecoration(labelText: "Password"),
+              controller: password,
+
               obscureText: true,
+
+              decoration: const InputDecoration(labelText: "Password"),
             ),
 
             const SizedBox(height: 20),
 
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushReplacementNamed(context, '/dashboard');
-              },
-              child: const Text("Login"),
-            ),
+            ElevatedButton(onPressed: login, child: const Text("Login")),
 
             TextButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/register');
+                Navigator.pushNamed(context, "/register");
               },
+
               child: const Text("Create Account"),
             ),
           ],

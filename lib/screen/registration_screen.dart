@@ -1,39 +1,65 @@
 import 'package:flutter/material.dart';
+import '../database/database_helper.dart';
 
-class RegistrationScreen extends StatelessWidget {
-  RegistrationScreen({super.key});
+class RegistrationScreen extends StatefulWidget {
+  const RegistrationScreen({super.key});
 
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+  @override
+  State<RegistrationScreen> createState() => _RegistrationScreenState();
+}
+
+class _RegistrationScreenState extends State<RegistrationScreen> {
+  final db = DatabaseHelper();
+
+  final email = TextEditingController();
+
+  final password = TextEditingController();
+
+  register() async {
+    if (email.text.isEmpty || password.text.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Fill all fields")));
+
+      return;
+    }
+
+    await db.registerUser(email.text, password.text);
+
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text("Account created")));
+
+    Navigator.pop(context);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Register")),
+      appBar: AppBar(title: Text("Register")),
 
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16),
+
         child: Column(
           children: [
             TextField(
-              controller: emailController,
-              decoration: const InputDecoration(labelText: "Email"),
+              controller: email,
+
+              decoration: InputDecoration(labelText: "Email"),
             ),
 
             TextField(
-              controller: passwordController,
-              decoration: const InputDecoration(labelText: "Password"),
+              controller: password,
+
               obscureText: true,
+
+              decoration: InputDecoration(labelText: "Password"),
             ),
 
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
 
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text("Register"),
-            ),
+            ElevatedButton(onPressed: register, child: Text("Register")),
           ],
         ),
       ),
